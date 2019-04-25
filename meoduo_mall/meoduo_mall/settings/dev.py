@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'users.apps.UsersConfig'
+    'users.apps.UsersConfig',
+    'verifications.apps.VerificationsConfig',
 
 
 
@@ -151,6 +152,13 @@ CACHES = {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
     },
+    "verify_code": { # 验证码
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/2",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    },
 }
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"#将session保存在缓存中
 SESSION_CACHE_ALIAS = "session"#指定缓存中的某个键
@@ -197,5 +205,7 @@ LOGGING = {
         },
     }
 }
+
+AUTH_USER_MODEL = 'users.User'
 
 
