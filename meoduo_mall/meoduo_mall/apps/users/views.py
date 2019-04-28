@@ -4,7 +4,7 @@ from django import http
 from django.contrib.auth import login
 import re
 from .models import User
-
+from django_redis import get_redis_connection
 
 class RegisterView(View):
     def get(self, request):
@@ -27,10 +27,11 @@ class RegisterView(View):
         cpwd = request.POST.get('cpwd')
         phone = request.POST.get('phone')
         allow = request.POST.get('allow')
+        sms_code_request = request.POST.get('msg_code')
 
         # 2.验证
         # 2.1非空
-        if not all([user_name, pwd, cpwd, phone, allow]):
+        if not all([user_name, pwd, cpwd, phone, allow,sms_code_request]):
             return http.HttpResponseBadRequest('参数不完整')
         # 2.2用户名格式
         if not re.match('^[a-zA-Z0-9_-]{5,20}$', user_name):
@@ -51,7 +52,13 @@ class RegisterView(View):
         if User.objects.filter(mobile=phone).count() > 0:
             return http.HttpResponseBadRequest('手机号已存在')
         # 2.8allow对应的是复选框checkbox，如果不选中，则在请求报文中不包含这个数据，在非空已经验证，不需要再验证
-
+        redis_cli = get_redis_connection("verify_code")
+        sms_code_redis = redis_cli.get('sms_' + phone)
+        if sms_code_redis is None:
+            return http.HttpResponseBadRequest('短信验证码过期')
+        if sms_code_redis.decode()!=sms_code_request:
+            return http.HttpResponseBadRequest('短信验证码错误')
+        redis_cli.delete('sms_'+phone)
         # 3.处理
         # 3.1保存用户对象
         # 问题：直接将数据保存到表中，而此处的密码需要加密再保存
