@@ -1,10 +1,11 @@
 from django.shortcuts import render, redirect
 from django.views import View
 from django import http
-from django.contrib.auth import login
+from django.contrib.auth import login,logout
 import re
 from .models import User
 from django_redis import get_redis_connection
+from django.contrib.auth import authenticate
 
 class RegisterView(View):
     def get(self, request):
@@ -96,3 +97,47 @@ class MobileCheckView(View):
         return http.JsonResponse({
             'count': count
         })
+
+class LoginView(View):
+    def get(self, request):
+        return render(request, 'login.html')
+
+    def post(self, request):
+        # 接收
+        username = request.POST.get('username')
+        pwd = request.POST.get('pwd')
+
+        # 验证
+        # 2.1非空
+        if not all([username, pwd]):
+            return http.HttpResponseBadRequest('参数不完整')
+        # 2.2用户名格式
+        if not re.match('^[a-zA-Z0-9_-]{5,20}$', username):
+            return http.HttpResponseBadRequest('请输入5-20个字符的用户名')
+        # 2.3密码格式
+        if not re.match('^[0-9A-Za-z]{8,20}$', pwd):
+            return http.HttpResponseBadRequest('请输入8-20位的密码')
+
+        # 处理：查询，状态保持
+        user = authenticate(username=username, password=pwd)
+        if user is None:
+            # 用户名或密码错误
+            return render(request, 'login.html', {
+                'loginerror': '用户名或密码错误'
+            })
+        else:
+            # 用户名或密码正确，则状态保持，重定向
+            login(request, user)
+            # 输出cookie，用于前端提示
+            response=redirect('/')
+            response.set_cookie('username',user.username,max_age=60*60*24*14)
+            return response
+
+            # 响应
+
+class LogoutView(View):
+    def get(self,request):
+        logout(request)
+        response = redirect('/')
+        response.delete_cookie('username')
+        return response

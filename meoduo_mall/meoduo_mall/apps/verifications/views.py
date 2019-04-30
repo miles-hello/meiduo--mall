@@ -53,26 +53,26 @@ class SmscodeView(View):
             })
             # 处理
             # 1.生成6位随机数
-            sms_code = '%06d' % random.randint(0, 999999)
+        sms_code = '%06d' % random.randint(0, 999999)
 
-            # # 2.保存到redis中
-            # redis_cli.setex('sms_' + mobile, constants.SMS_CODE_EXPIRES, sms_code)
-            # # 是否在60秒内发送短信的标记
-            # redis_cli.setex('sms_flag_' + mobile, constants.SMS_CODE_FLAG_EXPIRES, 1)
+        # # 2.保存到redis中
+        # redis_cli.setex('sms_' + mobile, constants.SMS_CODE_EXPIRES, sms_code)
+        # # 是否在60秒内发送短信的标记
+        # redis_cli.setex('sms_flag_' + mobile, constants.SMS_CODE_FLAG_EXPIRES, 1)
 
-            # 优化redis：只与redis服务器交互一次
-            redis_pl = redis_cli.pipeline()
-            redis_pl.setex('sms_' + mobile, constants.SMS_CODE_EXPIRES, sms_code)
-            redis_pl.setex('sms_flag_' + mobile, constants.SMS_CODE_FLAG_EXPIRES, 1)
-            redis_pl.execute()
+        # 优化redis：只与redis服务器交互一次
+        redis_pl = redis_cli.pipeline()
+        redis_pl.setex('sms_' + mobile, constants.SMS_CODE_EXPIRES, sms_code)
+        redis_pl.setex('sms_flag_' + mobile, constants.SMS_CODE_FLAG_EXPIRES, 1)
+        redis_pl.execute()
 
-            # 3.发短信
-            # time.sleep(5)
-            # ccp = CCP()
-            # ccp.send_template_sms(mobile, [sms_code, constants.SMS_CODE_EXPIRES / 60], 1)
-            # print(sms_code)
-            # 调用任务
-            send_sms.delay(mobile, [sms_code, constants.SMS_CODE_EXPIRES / 60], 1)
+        # 3.发短信
+        # time.sleep(5)
+        # ccp = CCP()
+        # ccp.send_template_sms(mobile, [sms_code, constants.SMS_CODE_EXPIRES / 60], 1)
+        # print(sms_code)
+        # 调用任务
+        send_sms.delay(mobile, [sms_code, constants.SMS_CODE_EXPIRES / 60], 1)
 
         # 响应
 

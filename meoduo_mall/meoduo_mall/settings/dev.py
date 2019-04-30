@@ -28,7 +28,7 @@ SECRET_KEY = 'uuskmkkf%i%+a(nyop)bub_=vpao$h@%ouz)o_+s2dg2d(stf6'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['www.meiduo.site']
 
 
 # Application definition
@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'users.apps.UsersConfig',
     'verifications.apps.VerificationsConfig',
-
+    'contents.apps.ContentsConfig'
 
 
     # 'meoduo_mall.apps.users.apps.UsersConfig',可以简化
@@ -208,4 +208,7 @@ LOGGING = {
 
 AUTH_USER_MODEL = 'users.User'
 
+
+# 指定认证后端
+AUTHENTICATION_BACKENDS = ['meoduo_mall.utils.auth_backenf.MeiduoBackend']
 
