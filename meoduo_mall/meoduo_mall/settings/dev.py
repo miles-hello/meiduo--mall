@@ -42,8 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'users.apps.UsersConfig',
     'verifications.apps.VerificationsConfig',
-    'contents.apps.ContentsConfig'
-
+    'contents.apps.ContentsConfig',
+    'oauth.apps.OauthConfig',
 
     # 'meoduo_mall.apps.users.apps.UsersConfig',可以简化
 ]
