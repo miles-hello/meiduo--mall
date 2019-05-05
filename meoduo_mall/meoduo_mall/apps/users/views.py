@@ -6,6 +6,7 @@ import re
 from .models import User
 from django_redis import get_redis_connection
 from django.contrib.auth import authenticate
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 class RegisterView(View):
     def get(self, request):
@@ -100,12 +101,13 @@ class MobileCheckView(View):
 
 class LoginView(View):
     def get(self, request):
-        return render(request, 'login.html')
+        return render(request,'login.html')
 
     def post(self, request):
         # 接收
         username = request.POST.get('username')
         pwd = request.POST.get('pwd')
+        next_url = request.GET.get('next','/')
 
         # 验证
         # 2.1非空
@@ -129,7 +131,7 @@ class LoginView(View):
             # 用户名或密码正确，则状态保持，重定向
             login(request, user)
             # 输出cookie，用于前端提示
-            response=redirect('/')
+            response=redirect(next_url)
             response.set_cookie('username',user.username,max_age=60*60*24*14)
             return response
 
@@ -141,3 +143,9 @@ class LogoutView(View):
         response = redirect('/')
         response.delete_cookie('username')
         return response
+
+class InfoView(LoginRequiredMixin,View):
+    def get(self,request):
+        # if not request.user.is_authenticated:
+        #     return redirect('/')
+        return render(request,'user_center_info.html')

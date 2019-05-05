@@ -212,3 +212,5 @@ AUTH_USER_MODEL = 'users.User'
 # 指定认证后端
 AUTHENTICATION_BACKENDS = ['meoduo_mall.utils.auth_backenf.MeiduoBackend']
 
+# 登录地址
+LOGIN_URL = '/login/'
