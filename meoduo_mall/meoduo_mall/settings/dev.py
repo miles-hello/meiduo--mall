@@ -214,3 +214,8 @@ AUTHENTICATION_BACKENDS = ['meoduo_mall.utils.auth_backenf.MeiduoBackend']
 
 # 登录地址
 LOGIN_URL = '/login/'
+
+# QQ登陆参数
+QQ_CLIENT_ID = '101518219'
+QQ_CLIENT_SECRET = '418d84ebdc7241efb79536886ae95224'
+QQ_REDIRECT_URI = 'http://www.meiduo.site:8000/oauth_callback'
