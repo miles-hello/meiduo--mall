@@ -26,7 +26,7 @@ var vm = new Vue({
         error_email: false,
         addresses: [],
         editing_address_index: '',
-        default_address_id: '',
+        defaul_address_id: '',
         edit_title_index: '',
         input_title: '',
         add_title:'新  增'
